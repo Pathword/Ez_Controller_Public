@@ -3,6 +3,7 @@ Public Ez_Controller all in one version, up to date as of 5/19/2019 8pm
 
 Issue: Cannot make Ez_Controller_dist.py into an executable, 
 "RecursionError: maximum recursion depth exceeded while calling a Python object" when using pyinstaller --onefile Ez_Controller_dist.py
+
 SO: https://stackoverflow.com/questions/56213063/recursion-error-maximum-recursion-depth-exceeded-while-calling-a-python-object?noredirect=1#comment99047165_56213063
 
 

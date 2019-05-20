@@ -8,15 +8,23 @@ SO: https://stackoverflow.com/questions/56213063/recursion-error-maximum-recursi
 
 
 Can run script and works fine, not related to issue but if the program is to be used heres an example: 
+
 Example run (simple spring-mass-damper): 
+
 Controller: No entry 
+
 Plant: Numerator = 8, Denominator = (s^2)+(2*s)+9
 
 Select mode (Step Response, Root Locus, or Bode Plot) and hit run.
 
+---
+
 To create an animation using Animation Step Response mode, replace a coefficent variable and vary it. 
+
 Controller: No entry 
+
 Plant: Numerator = 8, Denominator = (s**2)+(x*s)+9 
+
 lower = 1 upper = 5 Places animation in current gifs folder. 
 
 

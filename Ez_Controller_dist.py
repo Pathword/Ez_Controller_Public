@@ -61,9 +61,8 @@ class mygui(QDialog):
     @pyqtSlot()
     def on_pushButton_clicked(self):
         self.entries += 1
-        print(self.entries)
         # pushbutton will send double entries for press/release, simply taking odd values for press
-        if (self.entries % 2) == 2:
+        if (self.entries % 2) == 1:
 
             ### RUN CENTER
 

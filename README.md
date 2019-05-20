@@ -6,6 +6,9 @@ Issue: Cannot make Ez_Controller_dist.py into an executable,
 
 SO: https://stackoverflow.com/questions/56213063/recursion-error-maximum-recursion-depth-exceeded-while-calling-a-python-object?noredirect=1#comment99047165_56213063
 
+Python ver 3.7, pyinstaller ver 3.4
+
+---
 
 Can run script and works fine, not related to issue but if the program is to be used heres an example: 
 

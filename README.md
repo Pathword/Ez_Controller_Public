@@ -6,4 +6,5 @@ Fixed sympy/pyinstaller issue. Pyinstaller gave recursion error because of sympy
 .exe download: https://uccsoffice365-my.sharepoint.com/:f:/g/personal/dcopley_uccs_edu/EvK_F9GeiYJNgRemwnVZTjMB5svxodTJD65lLdNJUQZO0g?e=jRCwUC
 
 Known Issues: 
+
 -transfer functions that settle to 0 don't return proper settling times, makes sense because ts band is derived from +=2% of steady state value. Could make it as a function of peak values. 

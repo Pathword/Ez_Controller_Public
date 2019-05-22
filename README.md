@@ -7,4 +7,6 @@ Fixed sympy/pyinstaller issue. Pyinstaller gave recursion error because of sympy
 
 Known Issues: 
 
+-Governing transfer function display sometimes not big enough, simply increase width in designer. 
+
 -transfer functions that settle to 0 don't return proper settling times, makes sense because ts band is derived from +=2% of steady state value. Could make it as a function of peak values. 

@@ -23,6 +23,8 @@ Known Issues:
 
 -step responses that settle to 0 don't return proper settling times, makes sense because (Ts) band is derived from +-2% of steady state value. Could make it as a function of peak values, double check with Dr. A/L
 
+-isolated s values dont expand in numerator/denominator
+
 ---
 
 External Links/Other information:

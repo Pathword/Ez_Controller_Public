@@ -13,17 +13,5 @@ Allow gif scrubber to view local files: top right, three dots -> more tools -> e
 
 Drag and drop the gif in a chrome browser, right click image and select gif scrubber. 
 
----
 
-Known Issues: 
-
--Governing transfer function display sometimes not big enough, simply increase width in designer. 
-
--step responses that settle to 0 don't return proper settling times, makes sense because (Ts) band is derived from +-2% of steady state value. Could make it as a function of peak values, double check with Dr. A/L
-
----
-
-External Links/Other information:
-
-essentials of controls: Spring-Mass-Damper example https://www.youtube.com/watch?v=ej7CRAIGXow
 

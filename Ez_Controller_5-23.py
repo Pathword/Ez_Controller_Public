@@ -339,6 +339,7 @@ def sym2transfer(G_s,D_s):
             num_expr = pmbl.expand(num_expr)
             den_expr = pmbl.expand(den_expr)
 
+        #expand to get isolated s
         num_expr = get_iso_s(str(num_expr))
         den_expr = get_iso_s(str(den_expr))
 
@@ -346,9 +347,9 @@ def sym2transfer(G_s,D_s):
         num_expr = pmbl.expand(eval(num_expr))
         den_expr = pmbl.expand(eval(den_expr))
 
+        #get coefficients from expanded polynomial
         T['num'] = as_cof(str(num_expr))
         T['den'] = as_cof(str(den_expr))
-
 
         transfer = c.tf(T['num'], T['den'])
         return transfer

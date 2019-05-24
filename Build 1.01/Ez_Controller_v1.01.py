@@ -306,6 +306,12 @@ def sym2transfer(G_s,D_s):
         #finding isolated s powers, pymbolic sucks RIP sympy
         def get_iso_s(expr):
             s = pmbl.var("s")
+
+            #checking if power of s
+            for x in range(2,9):
+                if expr == "s**" + str(x):
+                    return expr
+
             #if s just return s
             if expr != "s":
 
@@ -318,6 +324,7 @@ def sym2transfer(G_s,D_s):
 
                 #count s occ
                 expr_list = [str(x) for x in child_list]
+
 
                 #get order
                 iso_s_order = expr_list.count('s')
@@ -338,18 +345,22 @@ def sym2transfer(G_s,D_s):
         num_expr = pmbl.expand(eval(T_s[0]))
         den_expr = pmbl.expand(eval(T_s[1]))
 
+
         # expanding itself 3 times, JUST IN CASE, sometimes expanding once throws a fit
         for n in range(3):
             num_expr = pmbl.expand(num_expr)
             den_expr = pmbl.expand(den_expr)
 
+
         #expand to get isolated s
         num_expr = get_iso_s(str(num_expr))
         den_expr = get_iso_s(str(den_expr))
 
+
         #expanding one last time JUST IN CASE
         num_expr = pmbl.expand(eval(num_expr))
         den_expr = pmbl.expand(eval(den_expr))
+
 
         #get coefficients from expanded polynomial
         T['num'] = as_cof(str(num_expr))

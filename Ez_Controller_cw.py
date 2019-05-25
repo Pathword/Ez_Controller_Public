@@ -147,9 +147,15 @@ class mygui(QDialog):
         # telling user gif location
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         location = (ROOT_DIR + '\\gifs\\animated.gif')
-
         self.label_16.setText(location)
 
+        #displaying to user
+        os.system(location)
+
+
+    #criteria_vs_x, goes with animated step response
+    def criteria_vs_x(self,G_s, D_s, lb, ub, samples, max_t):
+        crit_delta(G_s, D_s, lb, ub, samples, max_t)
 
     """
     Run center, on run button push 
@@ -214,7 +220,12 @@ class mygui(QDialog):
                 samples = int(self.spinBox_2.value())
                 fps = int(self.spinBox_3.value())
 
+                #animate
                 self.animated_step_response(G_s, D_s, lb, ub, samples, max_t, fps)
+                #plot criteria
+                self.criteria_vs_x(G_s, D_s, lb, ub, samples, max_t)
+
+
 
 
 
@@ -361,7 +372,6 @@ def sym2transfer(G_s,D_s):
         num_expr = pmbl.expand(eval(num_expr))
         den_expr = pmbl.expand(eval(den_expr))
 
-
         #get coefficients from expanded polynomial
         T['num'] = as_cof(str(num_expr))
         T['den'] = as_cof(str(den_expr))
@@ -450,6 +460,8 @@ def step_plotter(transfer, max_t):
     plt.grid(True)
     plt.xlim([0, max_t])
     plt.xlabel('Time')
+
+
 
     #plt should be init, showing within class structure of ui, update stepinfo fields first
 
@@ -547,9 +559,13 @@ def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps):
             peak) + '\n' + "x: " + str(round(x, 4)))
         ax.grid()
 
+        # maximize
+
+
         fig.canvas.draw()
         image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
         image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+
 
         return image
 
@@ -604,6 +620,126 @@ def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps):
 
     # closing all figures
     plt.close("all")
+
+"""
+crit_delta plots a static image of how Os,Ts,max_v, and max_a, the major criteria, change over each value of x. 
+Used with animated step response, can achieve desired behavior and criteria with animated step response 
+"""
+def crit_delta(G_s, D_s, lb, ub, samples, max_t):
+
+    #OS, Ts, Max V, Max A.
+
+
+    def iterate(G_s,D_s,x,max_t):
+        # iterative plant and controller
+        G_s_n = ["", ""]
+        D_s_n = ["", ""]
+
+        # simply replacing x with value, stored as strings.
+        G_s_n[0] = G_s[0].replace("x", str(x))
+        G_s_n[1] = G_s[1].replace("x", str(x))
+
+        D_s_n[0] = D_s[0].replace("x", str(x))
+        D_s_n[1] = D_s[1].replace("x", str(x))
+
+        # redefining transfer
+        transfer = sym2transfer(G_s_n, D_s_n)
+
+        """
+        decrease sample size? performance time? 
+        """
+        # defining time
+        t = np.linspace(0, max_t, 1000)
+        # returns numpy array
+        sr = c.step_response(transfer, t)
+        # parsing array
+        y = sr[1]
+
+        # getting step info
+        info = c.step_info(transfer)
+        # getting step info
+        Os = info['Overshoot']
+        Ts = info['SettlingTime']
+
+        # getting velocity
+        dy = []
+        time_step = t[1] - t[0]
+        for n in range(999):
+            dy.append((y[n + 1] - y[n]) / time_step)
+
+        max_v = max(np.abs(dy))
+
+
+        # getting acceleration
+        ddy = []
+        for n in range(998):
+            ddy.append((dy[n + 1] - dy[n]) / time_step)
+
+        max_a = max(np.abs(ddy))
+
+
+        return [Os,Ts,max_v,max_a]
+
+
+    #init lists
+
+    Os_list = []
+    Ts_list = []
+    max_v_list = []
+    max_a_list = []
+
+
+
+    # taking 0.01 from max_t, arange is non inclusive (<> not =<>=)
+    x_range = np.arange(lb,ub-0.01,float((ub-lb)/samples))
+
+    #iterate and get values
+    for x in x_range:
+        info = iterate(G_s,D_s,x,max_t)
+        Os_list.append(info[0])
+        Ts_list.append(info[1])
+        max_v_list.append(info[2])
+        max_a_list.append(info[3])
+
+    #getting absolute max
+    abs_max_Os = round(max(np.abs(Os_list)),2)
+    abs_max_Ts = round(max(np.abs(Ts_list)),3)
+    abs_max_v = round(max(np.abs(max_v_list)),3)
+    abs_max_a = round(max(np.abs(max_a_list)),3)
+
+
+    #plot, title should include absolute max values
+
+    #plotting OS
+    plt.subplot(4,1,1)
+    plt.title("Absolute Maximums" + "\n" + "OS: " + str(abs_max_Os) + " | Ts: " + str(abs_max_Ts) + "\n" + "Velocity: " + str(abs_max_v) + " | Acceleration: " + str(abs_max_a))
+
+    plt.plot(x_range,Os_list,'g')
+    plt.ylabel("%OS")
+    plt.grid(True)
+
+    #plotting Ts
+    plt.subplot(4, 1, 2)
+    plt.plot(x_range, Ts_list,'b')
+    plt.ylabel("Settling Time")
+    plt.grid(True)
+
+    #plotting max_v
+    plt.subplot(4, 1, 3)
+    plt.plot(x_range, max_v_list,'y')
+    plt.ylabel("Max Velocity")
+    plt.grid(True)
+
+    # plotting Ts
+    plt.subplot(4, 1, 4)
+    plt.plot(x_range, max_a_list,'r')
+    plt.ylabel("Max Acceleration")
+    plt.xlabel("x")
+    plt.grid(True)
+
+    plt.show()
+
+
 
 
 """

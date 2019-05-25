@@ -3,7 +3,6 @@ Public Ez_Controller all in one version, up to date as of 5/22/2019 4pm
 
 Fixed sympy/pyinstaller issue. Pyinstaller gave recursion error because of sympy's circular imports. Created a new algebraic expander using pymbolic and regex. 
 
-.exe download: https://uccsoffice365-my.sharepoint.com/:f:/g/personal/dcopley_uccs_edu/EhpMkbXxdB1Bs8l4_k1KJaQB-p5adBi_LAgr_FGaZHBarA?e=rEsDFg
 
 ---
 OPTIONAL:

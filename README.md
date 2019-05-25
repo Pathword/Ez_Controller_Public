@@ -27,4 +27,8 @@ Known Issues:
 
 External Links/Other information:
 
+Showcase 1: https://youtu.be/Fg_PnOdWBQE
+
+Showcase 2: https://youtu.be/jk98r97xM5I
+
 essentials of controls: Spring-Mass-Damper example https://www.youtube.com/watch?v=ej7CRAIGXow

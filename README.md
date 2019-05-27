@@ -22,6 +22,8 @@ Known Issues:
 
 -step responses that settle to 0 don't return proper settling times, makes sense because (Ts) band is derived from +-2% of steady state value. Could make it as a function of peak values, double check with Dr. A/L. Current workaround is editing timeresp.py in controls site-package. 
 
+-GUI will not display fully on windows machines with scaling != 100%. Settings -> Dispay -> Scale and Layout -> Change the size of text, apps, and other items. 
+
 
 ---
 

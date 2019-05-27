@@ -68,7 +68,7 @@ class mygui(QDialog):
     #init gui
     def __init__(self):
         super(mygui, self).__init__()
-        loadUi('app_v1.01.ui', self)
+        loadUi('app_v1.10.ui', self)
         self.setWindowTitle('Ez_Controller')
         self.pushButton.clicked.connect(self.on_pushButton_clicked)
         self.comboBox.activated.connect(self.pass_Net_Adap)

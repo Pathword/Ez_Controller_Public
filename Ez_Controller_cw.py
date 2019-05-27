@@ -8,10 +8,10 @@ import os
 import decorator
 
 # UI dependencies
+from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from PyQt5 import QtWidgets
 from PyQt5.uic import loadUi
 
 # math dependencies
@@ -68,7 +68,7 @@ class mygui(QDialog):
     #init gui
     def __init__(self):
         super(mygui, self).__init__()
-        loadUi('app_v1.01.ui', self)
+        loadUi('app_v1.10.ui', self)
         self.setWindowTitle('Ez_Controller')
         self.pushButton.clicked.connect(self.on_pushButton_clicked)
         self.comboBox.activated.connect(self.pass_Net_Adap)
@@ -79,6 +79,8 @@ class mygui(QDialog):
         #supressing animation options
         self.toggle_anim_options(0)
 
+
+
     """
     RUNNERS, execution types 
     """
@@ -86,8 +88,11 @@ class mygui(QDialog):
     #step response
     def step_response(self,G_s,D_s,max_t):
         plt.close()
+
+
         # combine and convert to Transfer matrix
         T = sym2transfer(G_s, D_s)
+
 
         # display governing transfer function
         self.label_18.setText(str(T))
@@ -117,6 +122,8 @@ class mygui(QDialog):
 
     #rlocus
     def root_locus(self,G_s,D_s):
+        plt.close()
+
         # combine and convert to Transfer matrix
         T = sym2transfer(G_s, D_s)
 
@@ -129,6 +136,8 @@ class mygui(QDialog):
 
     #bode
     def bode_plot(self,G_s,D_s):
+        plt.close()
+
         # combine and convert to Transfer matrix
         T = sym2transfer(G_s, D_s)
 
@@ -141,13 +150,19 @@ class mygui(QDialog):
 
     #animated step response
     def animated_step_response(self,G_s, D_s, lb, ub, samples, max_t, fps):
+        plt.close()
+
+
         # execute function
         step_anim(G_s, D_s, lb, ub, samples, max_t, fps)
 
         # telling user gif location
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-        location = (ROOT_DIR + '\\gifs\\animated.gif')
+        location = str((ROOT_DIR + "\\gifs\\animated.gif"))
         self.label_16.setText(location)
+
+        #encapsulation with double strings, os freaks out sometimes
+        location = "\"" + location + "\""
 
         #displaying to user
         os.system(location)
@@ -156,6 +171,8 @@ class mygui(QDialog):
     #criteria_vs_x, goes with animated step response
     def criteria_vs_x(self,G_s, D_s, lb, ub, samples, max_t):
         crit_delta(G_s, D_s, lb, ub, samples, max_t)
+
+
 
     """
     Run center, on run button push 
@@ -166,9 +183,7 @@ class mygui(QDialog):
         # pushbutton will send double entries for press/release, simply taking odd values for press
         if (self.entries % 2) == 1:
 
-            """
-            get mode and user edits 
-            """
+            # get mode
             mode = self.comboBox.currentText()
 
             # get line edits
@@ -176,6 +191,31 @@ class mygui(QDialog):
             G_s[1] = self.lineEdit_2.text()
             D_s[0] = self.lineEdit_3.text()
             D_s[1] = self.lineEdit_4.text()
+
+
+            # get max T value
+            max_t = int(self.spinBox_1.value())
+
+
+            #error message box
+            def error_msg(message):
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Critical)
+                msg.setText("Error")
+                msg.setInformativeText(message)
+                msg.setWindowTitle("Error")
+                msg.exec_()
+
+            """
+            cleaning center
+            
+            ^   ==  **
+            )(  ==  )*(
+            s(  ==  s*(
+            )s  ==  )*s
+            ns  ==  n*s
+            sn  ==  s*n
+            """
 
             # defaulting to 1 if no value, strings for sym2transfer to handle
             if G_s[0] == "":
@@ -187,47 +227,94 @@ class mygui(QDialog):
             if D_s[1] == "":
                 D_s[1] = "1"
 
-            #allowing for ^ to be used in powers
-            G_s[0] = G_s[0].replace("^", "**")
-            G_s[1] = G_s[1].replace("^", "**")
-            D_s[0] = D_s[0].replace("^", "**")
-            D_s[1] = D_s[1].replace("^", "**")
+            # defining syntaxers and replacements
+            syntaxers = {'^': '**', ')(': ')*(', 's(': 's*(', ')s': ')*s'}
 
-            # get max T value
-            max_t = int(self.spinBox_1.value())
+            # making replacements for known syntaxes
+            for key in syntaxers:
+                G_s[0] = G_s[0].replace(key, syntaxers[key])
+                G_s[1] = G_s[1].replace(key, syntaxers[key])
+                D_s[0] = D_s[0].replace(key, syntaxers[key])
+                D_s[1] = D_s[1].replace(key, syntaxers[key])
 
-            """
+            # making replacements for "ns/sn", value times s.
+            for n in range(0, 9):
+                # ns
+                G_s[0] = G_s[0].replace(str(n) + "s", str(n) + "*s")
+                G_s[1] = G_s[1].replace(str(n) + "s", str(n) + "*s")
+                D_s[0] = D_s[0].replace(str(n) + "s", str(n) + "*s")
+                D_s[1] = D_s[1].replace(str(n) + "s", str(n) + "*s")
+
+                # sn
+                G_s[0] = G_s[0].replace("s" + str(n), "s*" + str(n))
+                G_s[1] = G_s[1].replace("s" + str(n), "s*" + str(n))
+                D_s[0] = D_s[0].replace("s" + str(n), "s*" + str(n))
+                D_s[1] = D_s[1].replace("s" + str(n), "s*" + str(n))
+
+            #check entry, used to check if x found somewhere
+            check_entry = G_s[0] + G_s[1] + D_s[0] + D_s[1]
+
+            """            
             MODE RUNS 
             """
 
             # mode: step response, add max T condition
             if mode == "Step Response":
-                self.step_response(G_s,D_s,max_t)
+                try:
+                    self.step_response(G_s, D_s, max_t)
+                except:
+                    if "x" in check_entry:
+                        error_msg("Variable \'x\' only to be used in Animated Step Response Mode")
+                    else:
+                        error_msg("There is either a syntax error or the system you have generated is unstable.")
 
             # mode: root locus
             if mode == "Root Locus":
-                self.root_locus(G_s,D_s)
+                try:
+                    self.root_locus(G_s, D_s)
+                except:
+                    if "x" in check_entry:
+                        error_msg("Variable \'x\' only to be used in Animated Step Response Mode")
+                    else:
+                        error_msg("There is either a syntax error or the system you have generated is unstable.")
 
             # mode: Bode Plot
             if mode == "Bode Plot":
-                self.bode_plot(G_s,D_s)
+                try:
+                    self.bode_plot(G_s, D_s)
+                except:
+                    if "x" in check_entry:
+                        error_msg("Variable \'x\' only to be used in Animated Step Response Mode")
+                    else:
+                        error_msg("There is either a syntax error or the system you have generated is unstable.")
 
             # mode: animated step response
             if mode == "Animated Step Response":
                 # get other info besides G_s,D_s
-                lb = float(self.lineEdit_lower.text())
-                ub = float(self.lineEdit_upper.text())
+                try:
+                    lb = float(self.lineEdit_lower.text())
+                except:
+                    error_msg("Please enter a value for lower bounds.")
+
+                try:
+                    ub = float(self.lineEdit_upper.text())
+                except:
+                    error_msg("Please enter a value for upper bounds")
+
                 samples = int(self.spinBox_2.value())
                 fps = int(self.spinBox_3.value())
 
-                #animate
-                self.animated_step_response(G_s, D_s, lb, ub, samples, max_t, fps)
-                #plot criteria
-                self.criteria_vs_x(G_s, D_s, lb, ub, samples, max_t)
 
-
-
-
+                try:
+                    # animate
+                    self.animated_step_response(G_s, D_s, lb, ub, samples, max_t, fps)
+                    # plot criteria
+                    self.criteria_vs_x(G_s, D_s, lb, ub, samples, max_t)
+                except:
+                    if "x" not in check_entry:
+                        error_msg("Variable \'x\' not found")
+                    else:
+                        error_msg("There is either a syntax error or the system you have generated is unstable.")
 
 
     """
@@ -415,16 +502,12 @@ def step_plotter(transfer, max_t):
 
     # getting step info
     info = c.step_info(transfer)
-    OS = info['Overshoot']
-    Ts = info['SettlingTime']
-    SSv = info['SteadyStateValue']
-    peak = info['Peak']
-
-    # rounding so title is clean
-    OS = round(OS, 3)
-    Ts = round(Ts, 3)
-    SSv = round(SSv, 3)
-    peak = round(peak, 3)
+    OS = round(info['Overshoot'],3)
+    Ts = round(info['SettlingTime'],3)
+    SSv = round(info['SteadyStateValue'],3)
+    peak = round(info['Peak'],3)
+    max_v = round(max(dy), 4)
+    max_a = round(max(ddy), 4)
 
     # plotting displacement over time to step response
     plt.subplot(2, 1, 1)
@@ -439,7 +522,7 @@ def step_plotter(transfer, max_t):
     # drawing SSv line
     plt.axhline(info['SteadyStateValue'], linewidth=1, linestyle='--', color='r')
 
-    plt.title("OS: " + str(OS) + " | Ts: " + str(Ts) + '\n' + 'SSv: ' + str(SSv) + ' | Peak: ' + str(peak))
+    plt.title("OS: " + str(OS) + " | Ts: " + str(Ts) + '\n' + 'SSv: ' + str(SSv) + ' | Peak: ' + str(peak) + '\n' + "Max Velocity: " + str(max_v) + ' | Max Acceleration: ' + str(max_a))
     plt.grid(True)
 
     # plotting velocity

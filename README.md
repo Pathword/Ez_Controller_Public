@@ -7,12 +7,13 @@ Fixed sympy/pyinstaller issue. Pyinstaller gave recursion error because of sympy
 ---
 OPTIONAL:
 
+For .dll dist downloads for v1.11 and later, create a shortcut to .exe file for ease of use. Store dist. folder somewhere on machine. 
+
 Gif scrubber: download gif scrubber extension for chrome: https://chrome.google.com/webstore/detail/gif-scrubber/gbdacbnhlfdlllckelpdkgeklfjfgcmp?hl=en
 
 Allow gif scrubber to view local files: top right, three dots -> more tools -> extensions -> gifscrubber (details) -> allow access to file URLs. 
 
 Drag and drop the gif in a chrome browser, right click image and select gif scrubber. 
-
 
 
 ---

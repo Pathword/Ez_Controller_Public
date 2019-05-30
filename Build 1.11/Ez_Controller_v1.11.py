@@ -294,6 +294,7 @@ class mygui(QDialog):
             if mode == "Step Response":
                 try:
                     self.step_response(G_s, D_s, max_t)
+                    print(check_entry)
                 except:
                     if "x" in check_entry:
                         error_msg("Variable \'x\' only to be used in Animated Step Response Mode")

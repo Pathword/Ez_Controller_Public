@@ -37,8 +37,8 @@ class mygui(QDialog):
 
     ###CUSTOM GUI OPTIONS
 
-    #toggle animation options
-    def toggle_anim_options(self,bool):
+    # toggle animation options
+    def toggle_anim_options(self, bool):
         if bool == 1:
             # show animated options
             self.spinBox_2.setEnabled(1)
@@ -51,7 +51,7 @@ class mygui(QDialog):
             self.label_12.setEnabled(1)
             self.label_13.setEnabled(1)
             self.label_15.setEnabled(1)
-        if bool ==0:
+        if bool == 0:
             # default supressing animated options
             self.spinBox_2.setDisabled(1)
             self.spinBox_3.setDisabled(1)
@@ -64,8 +64,7 @@ class mygui(QDialog):
             self.label_13.setDisabled(1)
             self.label_15.setDisabled(1)
 
-
-    #init gui
+    # init gui
     def __init__(self):
         super(mygui, self).__init__()
         loadUi('app_v1.11.ui', self)
@@ -76,23 +75,19 @@ class mygui(QDialog):
         # entries
         self.entries = 0
 
-        #supressing animation options
+        # supressing animation options
         self.toggle_anim_options(0)
-
-
 
     """
     RUNNERS, execution types 
     """
 
-    #step response
-    def step_response(self,G_s,D_s,max_t):
+    # step response
+    def step_response(self, G_s, D_s, max_t):
         plt.close()
-
 
         # combine and convert to Transfer matrix
         T = sym2transfer(G_s, D_s)
-
 
         # display governing transfer function
         self.label_18.setText(str(T))
@@ -120,8 +115,8 @@ class mygui(QDialog):
         # plt plot should be init, showing
         plt.show()
 
-    #rlocus
-    def root_locus(self,G_s,D_s):
+    # rlocus
+    def root_locus(self, G_s, D_s):
         plt.close()
 
         # combine and convert to Transfer matrix
@@ -134,8 +129,8 @@ class mygui(QDialog):
         # execute function
         rootlocus_plotter(T)
 
-    #bode
-    def bode_plot(self,G_s,D_s):
+    # bode
+    def bode_plot(self, G_s, D_s):
         plt.close()
 
         # combine and convert to Transfer matrix
@@ -148,10 +143,9 @@ class mygui(QDialog):
         # execute function
         bode_plotter(T)
 
-    #animated step response
-    def animated_step_response(self,G_s, D_s, lb, ub, samples, max_t, fps):
+    # animated step response
+    def animated_step_response(self, G_s, D_s, lb, ub, samples, max_t, fps):
         plt.close()
-
 
         # execute function
         step_anim(G_s, D_s, lb, ub, samples, max_t, fps)
@@ -162,22 +156,20 @@ class mygui(QDialog):
 
         self.lineEdit_gifpath.setText(location)
 
-        #encapsulation with double strings, os freaks out sometimes
+        # encapsulation with double strings, os freaks out sometimes
         location = "\"" + location + "\""
 
-        #displaying to user
+        # displaying to user
         os.system(location)
 
-
-    #criteria_vs_x, goes with animated step response
-    def criteria_vs_x(self,G_s, D_s, lb, ub, samples, max_t):
+    # criteria_vs_x, goes with animated step response
+    def criteria_vs_x(self, G_s, D_s, lb, ub, samples, max_t):
         crit_delta(G_s, D_s, lb, ub, samples, max_t)
-
-
 
     """
     Run center, on run button push 
     """
+
     @pyqtSlot()
     def on_pushButton_clicked(self):
         self.entries += 1
@@ -193,12 +185,10 @@ class mygui(QDialog):
             D_s[0] = self.lineEdit_3.text()
             D_s[1] = self.lineEdit_4.text()
 
-
             # get max T value
             max_t = int(self.spinBox_1.value())
 
-
-            #error message box
+            # error message box
             def error_msg(message):
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Critical)
@@ -209,7 +199,7 @@ class mygui(QDialog):
 
             """
             cleaning center
-            
+
             ^   ==  **
             )(  ==  )*(
             s(  ==  s*(
@@ -235,7 +225,7 @@ class mygui(QDialog):
                 D_s[1] = "1"
 
             # defining syntaxers and replacements
-            syntaxers = {'^': '**', ')(': ')*(', 's(': 's*(', ')s': ')*s','sx':'s*x','xs':'x*s'}
+            syntaxers = {'^': '**', ')(': ')*(', 's(': 's*(', ')s': ')*s', 'sx': 's*x', 'xs': 'x*s'}
 
             # making replacements for known syntaxes
             for key in syntaxers:
@@ -246,44 +236,43 @@ class mygui(QDialog):
 
             # making replacements for "ns/sn", "nx/xn", value times s.
             for n in range(0, 9):
-                #ns
+                # ns
                 G_s[0] = G_s[0].replace(str(n) + "s", str(n) + "*s")
                 G_s[1] = G_s[1].replace(str(n) + "s", str(n) + "*s")
                 D_s[0] = D_s[0].replace(str(n) + "s", str(n) + "*s")
                 D_s[1] = D_s[1].replace(str(n) + "s", str(n) + "*s")
 
-                #sn
+                # sn
                 G_s[0] = G_s[0].replace("s" + str(n), "s*" + str(n))
                 G_s[1] = G_s[1].replace("s" + str(n), "s*" + str(n))
                 D_s[0] = D_s[0].replace("s" + str(n), "s*" + str(n))
                 D_s[1] = D_s[1].replace("s" + str(n), "s*" + str(n))
 
-                #nx
+                # nx
                 G_s[0] = G_s[0].replace(str(n) + "x", str(n) + "*x")
                 G_s[1] = G_s[1].replace(str(n) + "x", str(n) + "*x")
                 D_s[0] = D_s[0].replace(str(n) + "x", str(n) + "*x")
                 D_s[1] = D_s[1].replace(str(n) + "x", str(n) + "*x")
 
-                #xn
+                # xn
                 G_s[0] = G_s[0].replace(str(n) + "x", str(n) + "*x")
                 G_s[1] = G_s[1].replace(str(n) + "x", str(n) + "*x")
                 D_s[0] = D_s[0].replace(str(n) + "x", str(n) + "*x")
                 D_s[1] = D_s[1].replace(str(n) + "x", str(n) + "*x")
 
-                #n()
+                # n()
                 G_s[0] = G_s[0].replace(str(n) + "(", str(n) + "*(")
                 G_s[1] = G_s[1].replace(str(n) + "(", str(n) + "*(")
                 D_s[0] = D_s[0].replace(str(n) + "(", str(n) + "*(")
                 D_s[1] = D_s[1].replace(str(n) + "(", str(n) + "*(")
 
-                #()n
+                # ()n
                 G_s[0] = G_s[0].replace(")" + str(n), ")*" + str(n))
                 G_s[1] = G_s[1].replace(")" + str(n), ")*" + str(n))
                 D_s[0] = D_s[0].replace(")" + str(n), ")*" + str(n))
                 D_s[1] = D_s[1].replace(")" + str(n), ")*" + str(n))
 
-
-            #check entry, used to check if x found somewhere
+            # check entry, used to check if x found somewhere
             check_entry = G_s[0] + G_s[1] + D_s[0] + D_s[1]
 
             """            
@@ -337,11 +326,10 @@ class mygui(QDialog):
                 samples = int(self.spinBox_2.value())
                 fps = int(self.spinBox_3.value())
 
-
                 try:
                     if "x" not in check_entry:
-                        #purposefully break by doing this, breaks try/except and passes to actual error message
-                        #avoids double error message
+                        # purposefully break by doing this, breaks try/except and passes to actual error message
+                        # avoids double error message
                         e
                     else:
                         # animate
@@ -355,10 +343,10 @@ class mygui(QDialog):
                     else:
                         error_msg("There is either a syntax error or the system you have generated is unstable.")
 
-
     """
     GUI updater, toggle options 
     """
+
     # basically While True, getting mode changes
     @pyqtSlot()
     def pass_Net_Adap(self):
@@ -373,7 +361,6 @@ class mygui(QDialog):
 Action center, all actions called from gui. 
 """
 
-
 """
 Sym2transfer converts G_s, D_s into a single T_s, then uses algebraic expansion to return a matrix with coefficients
 on each order Availability up to 16th order s polynomial. Matrix is then inputted into get_T which calls from the 
@@ -381,53 +368,50 @@ controls library
 """
 
 
-def sym2transfer(G_s,D_s):
-
-    #inputted as string
+def sym2transfer(G_s, D_s):
+    # inputted as string
     def as_cof(expr):
 
-        #string manipulation
+        # string manipulation
 
-        #if a negative is in there, pole/zero in RHP, unstable
+        # if a negative is in there, pole/zero in RHP, unstable
         if "-" in expr:
             return "Unstable"
 
-        #up to 16th order polynomial
-        cof_mat = [0]*16
+        # up to 16th order polynomial
+        cof_mat = [0] * 16
 
-        #getting rid of white spaces,
-        expr_list = expr.replace(" ","").split("+")
-        #cof_list not organized, splitting be the cof and the n order
-        #transfer functions like the cofs in reverse
+        # getting rid of white spaces,
+        expr_list = expr.replace(" ", "").split("+")
+        # cof_list not organized, splitting be the cof and the n order
+        # transfer functions like the cofs in reverse
         for n in expr_list:
-            #any order greater than 1 represented with **, doing a check for s**1 and s**0 (s and simple cof)
+            # any order greater than 1 represented with **, doing a check for s**1 and s**0 (s and simple cof)
             if "**" not in n:
-                #if just s
+                # if just s
                 if n == "s":
                     cof_mat[-2] = 1
-                #cof
+                # cof
                 if "s" not in n:
                     cof_mat[-1] = float(n)
 
-                #even if s passing for some reason, fixed
+                # even if s passing for some reason, fixed
                 elif len(n) > 1:
-                    #to the left of the * sign
+                    # to the left of the * sign
                     cof = float(n.split("*")[0])
                     cof_mat[-2] = float(cof)
 
-
-            #checking for s**n where n>1
+            # checking for s**n where n>1
             if "**" in n:
-                #adding a negative sign to order, reverse assigning in cof_mat. adding 1 space for negative indexing
-                order = int("-" + n.split("**")[1]) -1
-                #cof always appears to the left of *, taking first instance
-                #if no cof then first instance will be s, checking and defaulting to 1 if case
+                # adding a negative sign to order, reverse assigning in cof_mat. adding 1 space for negative indexing
+                order = int("-" + n.split("**")[1]) - 1
+                # cof always appears to the left of *, taking first instance
+                # if no cof then first instance will be s, checking and defaulting to 1 if case
                 first = n.split("*")[0]
                 if first == "s":
                     cof_mat[order] = 1
                 else:
                     cof_mat[order] = float(first)
-
 
         return cof_mat
 
@@ -436,48 +420,47 @@ def sym2transfer(G_s,D_s):
         T_s = ["(" + G_s[0] + ')*(' + D_s[0] + ")", "(" + G_s[1] + ')*(' + D_s[1] + ")"]
         # init T
         T = {}
-        #init s symbol
+        # init s symbol
         s = pmbl.var("s")
-        #evaluating string :
 
-        #finding isolated s powers, pymbolic sucks RIP sympy
+        # evaluating string :
+
+        # finding isolated s powers, pymbolic sucks RIP sympy
         def get_iso_s(expr):
             s = pmbl.var("s")
 
-
-            #checking if multiplication
+            # checking if multiplication
             if "*" not in expr:
                 return str(expr)
 
-            #checking if power of s
-            for x in range(2,9):
+            # checking if power of s
+            for x in range(2, 9):
                 if expr == "s**" + str(x):
                     return expr
 
-            #if s just return s
+            # if s just return s
             if expr != "s":
 
-                #coeff
+                # coeff
                 if "s" not in expr:
                     return str(expr)
 
-                #get the children of the object, should be Variable("s")
+                # get the children of the object, should be Variable("s")
                 child_list = list(pmbl.expand(eval(expr)).children)
 
-                #count s occ
+                # count s occ
                 expr_list = [str(x) for x in child_list]
 
-
-                #get order
+                # get order
                 iso_s_order = expr_list.count('s')
 
                 expr_list = [str(x) for x in expr_list if x != "s"]
 
                 if iso_s_order > 0:
-                    #if no coefficient example (s*s)
+                    # if no coefficient example (s*s)
                     if iso_s_order == len(child_list):
                         expr = "s**" + str(iso_s_order)
-                    #if coefficient example (2*s*s)
+                    # if coefficient example (2*s*s)
                     else:
                         expr = "*".join(expr_list) + "*(s**" + str(iso_s_order) + ")"
 
@@ -487,34 +470,30 @@ def sym2transfer(G_s,D_s):
         num_expr = pmbl.expand(eval(T_s[0]))
         den_expr = pmbl.expand(eval(T_s[1]))
 
-
         # expanding itself 3 times, JUST IN CASE, sometimes expanding once throws a fit
         for n in range(3):
             num_expr = pmbl.expand(num_expr)
             den_expr = pmbl.expand(den_expr)
 
-
-        #expand to get isolated s
+        # expand to get isolated s
         num_expr = get_iso_s(str(num_expr))
         den_expr = get_iso_s(str(den_expr))
 
-
-        #expanding one last time JUST IN CASE
+        # expanding one last time JUST IN CASE
         num_expr = pmbl.expand(eval(num_expr))
         den_expr = pmbl.expand(eval(den_expr))
 
-        #get coefficients from expanded polynomial
+        # get coefficients from expanded polynomial
         T['num'] = as_cof(str(num_expr))
         T['den'] = as_cof(str(den_expr))
 
         transfer = c.tf(T['num'], T['den'])
         return transfer
 
-    #execute
-    T = get_T(G_s,D_s)
+    # execute
+    T = get_T(G_s, D_s)
 
     return T
-
 
 
 """
@@ -546,10 +525,10 @@ def step_plotter(transfer, max_t):
 
     # getting step info
     info = c.step_info(transfer)
-    OS = round(info['Overshoot'],3)
-    Ts = round(info['SettlingTime'],3)
-    SSv = round(info['SteadyStateValue'],3)
-    peak = round(info['Peak'],3)
+    OS = round(info['Overshoot'], 3)
+    Ts = round(info['SettlingTime'], 3)
+    SSv = round(info['SteadyStateValue'], 3)
+    peak = round(info['Peak'], 3)
     max_v = round(max(dy), 4)
     max_a = round(max(ddy), 4)
 
@@ -566,7 +545,8 @@ def step_plotter(transfer, max_t):
     # drawing SSv line
     plt.axhline(info['SteadyStateValue'], linewidth=1, linestyle='--', color='r')
 
-    plt.title("OS: " + str(OS) + " | Ts: " + str(Ts) + '\n' + 'SSv: ' + str(SSv) + ' | Peak: ' + str(peak) + '\n' + "Max Velocity: " + str(max_v) + ' | Max Acceleration: ' + str(max_a))
+    plt.title("OS: " + str(OS) + " | Ts: " + str(Ts) + '\n' + 'SSv: ' + str(SSv) + ' | Peak: ' + str(
+        peak) + '\n' + "Max Velocity: " + str(max_v) + ' | Max Acceleration: ' + str(max_a))
     plt.grid(True)
 
     # plotting velocity
@@ -588,9 +568,7 @@ def step_plotter(transfer, max_t):
     plt.xlim([0, max_t])
     plt.xlabel('Time')
 
-
-
-    #plt should be init, showing within class structure of ui, update stepinfo fields first
+    # plt should be init, showing within class structure of ui, update stepinfo fields first
 
     # rounding info dictionary
     for key in info.keys():
@@ -688,11 +666,9 @@ def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps):
 
         # maximize
 
-
         fig.canvas.draw()
         image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
         image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
-
 
         return image
 
@@ -748,16 +724,17 @@ def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps):
     # closing all figures
     plt.close("all")
 
+
 """
 crit_delta plots a static image of how Os,Ts,max_v, and max_a, the major criteria, change over each value of x. 
 Used with animated step response, can achieve desired behavior and criteria with animated step response 
 """
+
+
 def crit_delta(G_s, D_s, lb, ub, samples, max_t):
+    # OS, Ts, Max V, Max A.
 
-    #OS, Ts, Max V, Max A.
-
-
-    def iterate(G_s,D_s,x,max_t):
+    def iterate(G_s, D_s, x, max_t):
         # iterative plant and controller
         G_s_n = ["", ""]
         D_s_n = ["", ""]
@@ -796,7 +773,6 @@ def crit_delta(G_s, D_s, lb, ub, samples, max_t):
 
         max_v = max(np.abs(dy))
 
-
         # getting acceleration
         ddy = []
         for n in range(998):
@@ -804,69 +780,64 @@ def crit_delta(G_s, D_s, lb, ub, samples, max_t):
 
         max_a = max(np.abs(ddy))
 
+        return [Os, Ts, max_v, max_a]
 
-        return [Os,Ts,max_v,max_a]
-
-
-    #init lists
+    # init lists
 
     Os_list = []
     Ts_list = []
     max_v_list = []
     max_a_list = []
 
-
-
     # taking 0.01 from max_t, arange is non inclusive (<> not =<>=)
-    x_range = np.arange(lb,ub-0.01,float((ub-lb)/samples))
+    x_range = np.arange(lb, ub - 0.01, float((ub - lb) / samples))
 
-    #iterate and get values
+    # iterate and get values
     for x in x_range:
-        info = iterate(G_s,D_s,x,max_t)
+        info = iterate(G_s, D_s, x, max_t)
         Os_list.append(info[0])
         Ts_list.append(info[1])
         max_v_list.append(info[2])
         max_a_list.append(info[3])
 
-    #getting absolute max
-    abs_max_Os = round(max(np.abs(Os_list)),2)
-    abs_max_Ts = round(max(np.abs(Ts_list)),3)
-    abs_max_v = round(max(np.abs(max_v_list)),3)
-    abs_max_a = round(max(np.abs(max_a_list)),3)
+    # getting absolute max
+    abs_max_Os = round(max(np.abs(Os_list)), 2)
+    abs_max_Ts = round(max(np.abs(Ts_list)), 3)
+    abs_max_v = round(max(np.abs(max_v_list)), 3)
+    abs_max_a = round(max(np.abs(max_a_list)), 3)
 
+    # plot, title should include absolute max values
 
-    #plot, title should include absolute max values
+    # plotting OS
+    plt.subplot(4, 1, 1)
+    plt.title(
+        "Absolute Maximums" + "\n" + "OS: " + str(abs_max_Os) + " | Ts: " + str(abs_max_Ts) + "\n" + "Velocity: " + str(
+            abs_max_v) + " | Acceleration: " + str(abs_max_a))
 
-    #plotting OS
-    plt.subplot(4,1,1)
-    plt.title("Absolute Maximums" + "\n" + "OS: " + str(abs_max_Os) + " | Ts: " + str(abs_max_Ts) + "\n" + "Velocity: " + str(abs_max_v) + " | Acceleration: " + str(abs_max_a))
-
-    plt.plot(x_range,Os_list,'g')
+    plt.plot(x_range, Os_list, 'g')
     plt.ylabel("%OS")
     plt.grid(True)
 
-    #plotting Ts
+    # plotting Ts
     plt.subplot(4, 1, 2)
-    plt.plot(x_range, Ts_list,'b')
+    plt.plot(x_range, Ts_list, 'b')
     plt.ylabel("Settling Time")
     plt.grid(True)
 
-    #plotting max_v
+    # plotting max_v
     plt.subplot(4, 1, 3)
-    plt.plot(x_range, max_v_list,'y')
+    plt.plot(x_range, max_v_list, 'y')
     plt.ylabel("Max Velocity")
     plt.grid(True)
 
     # plotting Ts
     plt.subplot(4, 1, 4)
-    plt.plot(x_range, max_a_list,'r')
+    plt.plot(x_range, max_a_list, 'r')
     plt.ylabel("Max Acceleration")
     plt.xlabel("x")
     plt.grid(True)
 
     plt.show()
-
-
 
 
 """

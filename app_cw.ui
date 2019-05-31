@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>606</width>
-    <height>763</height>
+    <height>738</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -171,6 +171,11 @@
    <item>
     <property name="text">
      <string>Animated Step Response</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Animated Root Locus</string>
     </property>
    </item>
   </widget>
@@ -721,71 +726,6 @@
     <enum>Qt::Vertical</enum>
    </property>
   </widget>
-  <widget class="QLabel" name="label_16">
-   <property name="geometry">
-    <rect>
-     <x>48</x>
-     <y>692</y>
-     <width>501</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-  </widget>
-  <widget class="Line" name="line_23">
-   <property name="geometry">
-    <rect>
-     <x>38</x>
-     <y>684</y>
-     <width>521</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-  </widget>
-  <widget class="Line" name="line_24">
-   <property name="geometry">
-    <rect>
-     <x>38</x>
-     <y>714</y>
-     <width>521</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-  </widget>
-  <widget class="Line" name="line_25">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>693</y>
-     <width>20</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Vertical</enum>
-   </property>
-  </widget>
-  <widget class="Line" name="line_26">
-   <property name="geometry">
-    <rect>
-     <x>551</x>
-     <y>693</y>
-     <width>16</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Vertical</enum>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_17">
    <property name="geometry">
     <rect>
@@ -901,6 +841,16 @@
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_gifpath">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>690</y>
+     <width>521</width>
+     <height>20</height>
+    </rect>
    </property>
   </widget>
  </widget>

@@ -114,6 +114,7 @@ class mygui(QDialog):
             self.tableWidget.setItem(0, n, QtWidgets.QTableWidgetItem(str(table_info[n])))
 
         # plt plot should be init, showing
+        #showing after because need to get info first to update GUI
         plt.show()
 
     # rlocus
@@ -302,7 +303,6 @@ class mygui(QDialog):
             if mode == "Step Response":
                 try:
                     self.step_response(G_s, D_s, max_t)
-                    print(check_entry)
                 except:
                     if "x" in check_entry:
                         error_msg("Variable \'x\' only to be used in Animated Step Response Mode")
@@ -853,8 +853,8 @@ def crit_delta(G_s, D_s, lb, ub, samples, max_t):
         max_a_list.append(info[3])
 
     # getting absolute max
-    abs_max_Os = round(max(np.abs(Os_list)), 2)
-    abs_max_Ts = round(max(np.abs(Ts_list)), 3)
+    abs_min_Os = round(min(np.abs(Os_list)), 2)
+    abs_min_Ts = round(min(np.abs(Ts_list)), 3)
     abs_max_v = round(max(np.abs(max_v_list)), 3)
     abs_max_a = round(max(np.abs(max_a_list)), 3)
 
@@ -862,9 +862,7 @@ def crit_delta(G_s, D_s, lb, ub, samples, max_t):
 
     # plotting OS
     plt.subplot(4, 1, 1)
-    plt.title(
-        "Absolute Maximums" + "\n" + "OS: " + str(abs_max_Os) + " | Ts: " + str(abs_max_Ts) + "\n" + "Velocity: " + str(
-            abs_max_v) + " | Acceleration: " + str(abs_max_a))
+    plt.title("Absolute Maximums" + "\n" + "Velocity: " + str(abs_max_v) + " | Acceleration: " + str(abs_max_a) + "\n" + "Absolute Minimums" + "\n" + "OS: " + str(abs_min_Os) + " | Ts: " + str(abs_min_Ts))
 
     plt.plot(x_range, Os_list, 'g')
     plt.ylabel("%OS")
@@ -920,6 +918,7 @@ def rootlocus_anim(G_s, D_s, lb, ub, samples, nfps):
         #plotting transfer
         fig,ax = plt.subplots()
         c.root_locus(transfer,grid=True,Plot=True,xlim=[-10,0],ylim=[-10,10])
+        plt.title("x = " + str(x))
         fig = plt.gcf()
 
         # maximize

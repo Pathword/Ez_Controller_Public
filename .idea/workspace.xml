@@ -14,77 +14,43 @@
         <counts>
           <entry key="project.closed" value="1" />
           <entry key="project.open.time.0" value="1" />
-          <entry key="project.opened" value="1" />
+          <entry key="project.open.time.4" value="1" />
+          <entry key="project.opened" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="4" />
+          <entry key="py" value="7" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="4" />
+          <entry key="Python" value="7" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
+          <entry key="Python Console" value="261" />
           <entry key="dummy" value="5" />
-          <entry key="py" value="947" />
+          <entry key="py" value="1760" />
           <entry key="testssv" value="145" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="5" />
-          <entry key="Python" value="1092" />
+          <entry key="Python" value="2166" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file pinned="false" current-in-tab="false">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Ez_Controller_cw.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="168" column="52" selection-start-line="168" selection-start-column="8" selection-end-line="168" selection-end-column="52" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7935">
-              <caret line="97" column="37" selection-start-line="97" selection-start-column="15" selection-end-line="97" selection-end-column="37" />
-              <folding>
-                <element signature="e#113#123#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/step_testssv.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="138">
-              <caret line="176" selection-start-line="176" selection-end-line="176" />
-              <folding>
-                <element signature="e#22#32#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/stepanim_testssv.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="482">
-              <caret line="438" lean-forward="true" selection-start-line="438" selection-end-line="438" />
-              <folding>
-                <element signature="e#22#32#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="299">
+              <caret line="1066" column="25" lean-forward="true" selection-start-line="1066" selection-start-column="25" selection-end-line="1066" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -104,11 +70,12 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/testssv.py" />
-        <option value="$PROJECT_DIR$/Ez_Controller_cw.py" />
         <option value="$PROJECT_DIR$/step_testssv.py" />
         <option value="$PROJECT_DIR$/stepanim_testssv.py" />
+        <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/Build 1.12/Ez_Controller_v1.12.py" />
+        <option value="$PROJECT_DIR$/Ez_Controller_cw.py" />
       </list>
     </option>
   </component>
@@ -129,6 +96,11 @@
             <path>
               <item name="Ez_Controller_Public" type="b2602c69:ProjectViewProjectNode" />
               <item name="Ez_Controller_Public" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Ez_Controller_Public" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Ez_Controller_Public" type="462c0819:PsiDirectoryNode" />
+              <item name="Build 1.12" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -152,7 +124,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.stepanim_testssv">
+  <component name="RunManager" selected="Python.test">
     <configuration name="Ez_Controller_cw" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Ez_Controller_Public" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -195,11 +167,33 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Ez_Controller_Public" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="testssv" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Ez_Controller_Public" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
         <env name="DISPLAY" value="True" />
       </envs>
       <option name="SDK_HOME" value="" />
@@ -220,12 +214,14 @@
       <item itemvalue="Python.Ez_Controller_cw" />
       <item itemvalue="Python.testssv" />
       <item itemvalue="Python.stepanim_testssv" />
+      <item itemvalue="Python.test" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.test" />
+        <item itemvalue="Python.Ez_Controller_cw" />
         <item itemvalue="Python.stepanim_testssv" />
         <item itemvalue="Python.testssv" />
-        <item itemvalue="Python.Ez_Controller_cw" />
       </list>
     </recent_temporary>
   </component>
@@ -244,21 +240,22 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.11643836" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.11643836" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Python Console" weight="0.329718" />
-      <window_info anchor="bottom" id="Terminal" weight="0.329718" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.22885032" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.2527115" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.329718" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.329718" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -270,7 +267,7 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/step_testssv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
+        <state relative-caret-position="2826">
           <caret line="176" selection-start-line="176" selection-end-line="176" />
           <folding>
             <element signature="e#22#32#0" expanded="true" />
@@ -278,30 +275,38 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/stepanim_testssv.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="482">
+          <caret line="438" selection-start-line="438" selection-end-line="438" />
+          <folding>
+            <element signature="e#22#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Build 1.12/Ez_Controller_v1.12.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="576">
+          <caret line="141" column="45" lean-forward="true" selection-start-line="141" selection-start-column="45" selection-end-line="141" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7935">
-          <caret line="97" column="37" selection-start-line="97" selection-start-column="15" selection-end-line="97" selection-end-column="37" />
+        <state relative-caret-position="155">
+          <caret line="1001" column="25" selection-end-line="1083" />
           <folding>
-            <element signature="e#113#123#0" expanded="true" />
+            <marker date="1559582518357" expanded="true" signature="22214:22219" ph="..." />
+            <marker date="1559582518357" expanded="true" signature="31492:32116" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Ez_Controller_cw.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="168" column="52" selection-start-line="168" selection-start-column="8" selection-end-line="168" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/stepanim_testssv.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="482">
-          <caret line="438" lean-forward="true" selection-start-line="438" selection-end-line="438" />
-          <folding>
-            <element signature="e#22#32#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="299">
+          <caret line="1066" column="25" lean-forward="true" selection-start-line="1066" selection-start-column="25" selection-end-line="1066" selection-end-column="25" />
         </state>
       </provider>
     </entry>

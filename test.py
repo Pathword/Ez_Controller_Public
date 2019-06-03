@@ -84,21 +84,14 @@ class mygui(QDialog):
     """
 
     # step response
-    def step_response(self, G_s, D_s, max_t):
+    def step_response(self, G_s, D_s, max_t,cssv):
         plt.close()
 
-        # combine and convert to Transfer matrix
-        T = sym2transfer(G_s, D_s)
-
-        # display governing transfer function
-        self.label_18.setText(str(T))
-        self.label_18.setAlignment(Qt.AlignCenter)
-
-        # execute function and getting info, plot should show regardless
-        info = step_plotter(T, max_t)
+        # execute function and getting info, plot shown at end, making gui edits
+        info = step_plotter(G_s,D_s, max_t,cssv)
 
         # getting table info into a list, trust me better than handling dict.
-        table_info = [0] * 9
+        table_info = [0] * 10
         table_info[0] = info["Overshoot"]
         table_info[1] = info["SettlingTime"]
         table_info[2] = info["SteadyStateValue"]
@@ -108,12 +101,21 @@ class mygui(QDialog):
         table_info[6] = info["PeakTime"]
         table_info[7] = info["RiseTime"]
         table_info[8] = info["Undershoot"]
+        table_info[9] = info["TransferFunction"]
+
 
         # writing to Step info table in UI
         for n in range(0, 9):
             self.tableWidget.setItem(0, n, QtWidgets.QTableWidgetItem(str(table_info[n])))
 
+
+        # display governing transfer function
+        self.label_18.setText(str(table_info[9]))
+        self.label_18.setAlignment(Qt.AlignCenter)
+
+
         # plt plot should be init, showing
+        #showing after because need to get info first to update GUI
         plt.show()
 
     # rlocus
@@ -145,11 +147,11 @@ class mygui(QDialog):
         bode_plotter(T)
 
     # animated step response
-    def animated_step_response(self, G_s, D_s, lb, ub, samples, max_t, fps):
+    def animated_step_response(self, G_s, D_s, lb, ub, samples, max_t, fps,cssv):
         plt.close()
 
         # execute function
-        step_anim(G_s, D_s, lb, ub, samples, max_t, fps)
+        step_anim(G_s, D_s, lb, ub, samples, max_t, fps,cssv)
 
         # telling user gif location
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -164,8 +166,8 @@ class mygui(QDialog):
         os.system(location)
 
     # criteria_vs_x, goes with animated step response
-    def criteria_vs_x(self, G_s, D_s, lb, ub, samples, max_t):
-        crit_delta(G_s, D_s, lb, ub, samples, max_t)
+    def criteria_vs_x(self, G_s, D_s, lb, ub, samples, max_t,cssv):
+        crit_delta(G_s, D_s, lb, ub, samples, max_t,cssv)
 
 
     #animated root locus
@@ -195,18 +197,6 @@ class mygui(QDialog):
         # pushbutton will send double entries for press/release, simply taking odd values for press
         if (self.entries % 2) == 1:
 
-            # get mode
-            mode = self.comboBox.currentText()
-
-            # get line edits
-            G_s[0] = self.lineEdit_1.text()
-            G_s[1] = self.lineEdit_2.text()
-            D_s[0] = self.lineEdit_3.text()
-            D_s[1] = self.lineEdit_4.text()
-
-            # get max T value
-            max_t = int(self.spinBox_1.value())
-
             # error message box
             def error_msg(message):
                 msg = QMessageBox()
@@ -215,6 +205,32 @@ class mygui(QDialog):
                 msg.setInformativeText(message)
                 msg.setWindowTitle("Error")
                 msg.exec_()
+
+
+            # get mode
+            mode = self.comboBox.currentText()
+
+            # get max T value
+            max_t = int(self.spinBox_1.value())
+
+            # get cssv
+            cssv = self.lineEdit_ssv.text()
+
+            # if no entry default to -1
+            if cssv == "":
+                cssv = -1
+
+            try:
+                cssv = float(cssv)
+            except:
+                error_msg("Please enter a numerical value for cssv")
+
+
+            # get line edits
+            G_s[0] = self.lineEdit_1.text()
+            G_s[1] = self.lineEdit_2.text()
+            D_s[0] = self.lineEdit_3.text()
+            D_s[1] = self.lineEdit_4.text()
 
             """
             cleaning center
@@ -294,6 +310,8 @@ class mygui(QDialog):
             # check entry, used to check if x found somewhere
             check_entry = G_s[0] + G_s[1] + D_s[0] + D_s[1]
 
+
+
             """            
             MODE RUNS 
             """
@@ -301,7 +319,7 @@ class mygui(QDialog):
             # mode: step response, add max T condition
             if mode == "Step Response":
                 try:
-                    self.step_response(G_s, D_s, max_t)
+                    self.step_response(G_s, D_s, max_t,cssv)
                 except:
                     if "x" in check_entry:
                         error_msg("Variable \'x\' only to be used in Animated Step Response Mode")
@@ -351,9 +369,9 @@ class mygui(QDialog):
                         e
                     else:
                         # animate
-                        self.animated_step_response(G_s, D_s, lb, ub, samples, max_t, fps)
+                        self.animated_step_response(G_s, D_s, lb, ub, samples, max_t, fps,cssv)
                         # plot criteria
-                        self.criteria_vs_x(G_s, D_s, lb, ub, samples, max_t)
+                        self.criteria_vs_x(G_s, D_s, lb, ub, samples, max_t,cssv)
 
                 except:
                     if "x" not in check_entry:
@@ -554,11 +572,30 @@ info table
 """
 
 
-# root function is the plotter function
-def step_plotter(transfer, max_t):
+def step_plotter(G_s,D_s, max_t,cssv=-1):
+
+    T_s = ["(" + G_s[0] + ')*(' + D_s[0] + ")", "(" + G_s[1] + ')*(' + D_s[1] + ")"]
+
+    if cssv != -1:
+        s = 0
+        #getting current ssv, lim s->0 of T_s
+        ssv = eval(T_s[0])/eval(T_s[1])
+
+        k = cssv/ssv
+
+        #applying k to G_s[0], doesnt matter
+        G_s[0] = "(" + str(k) + ")*(" + G_s[0] + ")"
+        transfer = sym2transfer(G_s,D_s)
+
+    else:
+
+        transfer = sym2transfer(G_s,D_s)
+
     # defining time, 1000 discrete steps
     t = np.linspace(0, max_t, 1000)
     # returns numpy array
+
+
     sr = c.step_response(transfer, t)
     # parsing array
     y = sr[1]
@@ -628,8 +665,10 @@ def step_plotter(transfer, max_t):
     # adding max v and max a
     info['MaxVelocity'] = round(max(dy), 4)
     info['MaxAcceleration'] = round(max(ddy), 4)
+    info['TransferFunction'] = transfer
 
     return info
+
 
 
 """
@@ -638,7 +677,12 @@ Root locus plotter... takes transfer function and uses controls library to plot
 
 
 def rootlocus_plotter(transfer):
-    c.root_locus(transfer, grid=True, PrintGain=True, Plot=True)
+
+    #find the max "radius", 1.3 times the maximum radius created by a zero or pole from origin
+    max_r = 1.3*max([max(abs(c.pole(transfer))),max(abs(c.zero(transfer)))])
+
+    #plot with lims
+    c.root_locus(transfer, grid=True, PrintGain=True, Plot=True,xlim=[-max_r,0],ylim=[-max_r,max_r])
     plt.show()
 
 
@@ -662,10 +706,11 @@ saved to current directory and then gifs folder. (ROOT_DIR + \\gifs\\animated.gi
 """
 
 
-def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps):
+
+def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps,cssv=-1):
     # takes x as variable, x value passed by list comprehension
     # pass max_y to set constant y limit
-    def plot_anim(G_s, D_s, x, max_y, max_t):
+    def plot_anim(G_s, D_s, x, max_y, max_t,cssv=-1):
 
         # iterative plant and controller
         G_s_n = ["", ""]
@@ -678,8 +723,22 @@ def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps):
         D_s_n[0] = D_s[0].replace("x", str(x))
         D_s_n[1] = D_s[1].replace("x", str(x))
 
-        # redefining transfer
-        transfer = sym2transfer(G_s_n, D_s_n)
+        T_s_n = ["(" + G_s_n[0] + ')*(' + D_s_n[0] + ")", "(" + G_s_n[1] + ')*(' + D_s_n[1] + ")"]
+
+        if cssv != -1:
+            s = 0
+            # getting current ssv, lim s->0 of T_s
+            ssv = eval(T_s_n[0]) / eval(T_s_n[1])
+
+            k = cssv / ssv
+
+            # applying k to G_s[0], doesnt matter
+            G_s[0] = "(" + str(k) + ")*(" + G_s[0] + ")"
+            transfer = sym2transfer(G_s_n, D_s_n)
+
+        else:
+
+            transfer = sym2transfer(G_s_n, D_s_n)
 
         # defining time
         t = np.linspace(0, max_t, 1000)
@@ -724,14 +783,16 @@ def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps):
         return image
 
     # pre iterating, getting max val from a smaller sample set
-    def get_ylim(G_s, D_s, lb, ub, samples):
+    def get_ylim(G_s, D_s, lb, ub, samples,cssv=-1):
         max_peaks = []
 
         # getting smaller samples to save on rendering time
-        samples = samples / 6
+        samples = samples / 4
 
         # try samples, append max_peaks from sample step info
         for x in np.arange(lb, ub, ((ub - lb) / samples)):
+
+
             # iterative plant and controller
             G_s_n = ["", ""]
             D_s_n = ["", ""]
@@ -743,8 +804,23 @@ def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps):
             D_s_n[0] = D_s[0].replace("x", str(x))
             D_s_n[1] = D_s[1].replace("x", str(x))
 
-            # redefining transfer
-            transfer = sym2transfer(G_s_n, D_s_n)
+            T_s_n = ["(" + G_s_n[0] + ')*(' + D_s_n[0] + ")", "(" + G_s_n[1] + ')*(' + D_s_n[1] + ")"]
+
+            if cssv != -1:
+                s = 0
+                # getting current ssv, lim s->0 of T_s
+                ssv = eval(T_s_n[0]) / eval(T_s_n[1])
+
+                k = cssv / ssv
+
+                # applying k to G_s[0], doesnt matter
+                G_s_n[0] = "(" + str(k) + ")*(" + G_s_n[0] + ")"
+                transfer = sym2transfer(G_s_n, D_s_n)
+
+            else:
+
+                transfer = sym2transfer(G_s_n, D_s_n)
+
 
             # get step info of transfer
             info = c.step_info(transfer)
@@ -756,10 +832,11 @@ def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps):
         # y lim is the max of the maximum peaks returned,
         max_y = max(max_peaks)
 
+
         return max_y
 
     # getting y lim
-    max_y = get_ylim(G_s, D_s, lb, ub, samples)
+    max_y = get_ylim(G_s, D_s, lb, ub, samples,cssv)
 
     # getting root dir
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -770,10 +847,11 @@ def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps):
 
     # big boi, getting a list of images using list comp
     imageio.mimsave((ROOT_DIR + '\\gifs\\animated.gif'),
-                    [plot_anim(G_s, D_s, x, max_y, max_t) for x in np.arange(lb, ub, ((ub - lb) / samples))], fps=nfps)
+                    [plot_anim(G_s, D_s, x, max_y, max_t,cssv) for x in np.arange(lb, ub, ((ub - lb) / samples))], fps=nfps)
 
     # closing all figures
     plt.close("all")
+
 
 
 """
@@ -782,10 +860,11 @@ Used with animated step response, can achieve desired behavior and criteria with
 """
 
 
-def crit_delta(G_s, D_s, lb, ub, samples, max_t):
+
+def crit_delta(G_s, D_s, lb, ub, samples, max_t,cssv=-1):
     # OS, Ts, Max V, Max A.
 
-    def iterate(G_s, D_s, x, max_t):
+    def iterate(G_s, D_s, x, max_t,cssv=-1):
         # iterative plant and controller
         G_s_n = ["", ""]
         D_s_n = ["", ""]
@@ -797,8 +876,22 @@ def crit_delta(G_s, D_s, lb, ub, samples, max_t):
         D_s_n[0] = D_s[0].replace("x", str(x))
         D_s_n[1] = D_s[1].replace("x", str(x))
 
-        # redefining transfer
-        transfer = sym2transfer(G_s_n, D_s_n)
+        T_s_n = ["(" + G_s_n[0] + ')*(' + D_s_n[0] + ")", "(" + G_s_n[1] + ')*(' + D_s_n[1] + ")"]
+
+        if cssv != -1:
+            s = 0
+            # getting current ssv, lim s->0 of T_s
+            ssv = eval(T_s_n[0]) / eval(T_s_n[1])
+
+            k = cssv / ssv
+
+            # applying k to G_s[0], doesnt matter
+            G_s_n[0] = "(" + str(k) + ")*(" + G_s_n[0] + ")"
+            transfer = sym2transfer(G_s_n, D_s_n)
+
+        else:
+
+            transfer = sym2transfer(G_s_n, D_s_n)
 
         """
         decrease sample size? performance time? 
@@ -845,7 +938,7 @@ def crit_delta(G_s, D_s, lb, ub, samples, max_t):
 
     # iterate and get values
     for x in x_range:
-        info = iterate(G_s, D_s, x, max_t)
+        info = iterate(G_s, D_s, x, max_t,cssv)
         Os_list.append(info[0])
         Ts_list.append(info[1])
         max_v_list.append(info[2])
@@ -889,6 +982,7 @@ def crit_delta(G_s, D_s, lb, ub, samples, max_t):
     plt.show()
 
 
+
 """
 rootlocus animator 
 """
@@ -896,9 +990,32 @@ rootlocus animator
 def rootlocus_anim(G_s, D_s, lb, ub, samples, nfps):
     plt.ioff()
 
+    #getting lims, equal to twice the radius of the largest pole or zero from origin
+    #only need ub, the largest value ...
+    def get_lims(G_s,D_s,ub):
+        # iterative plant and controller
+        G_s_n = ["", ""]
+        D_s_n = ["", ""]
+
+        # simply replacing x with value, stored as strings.
+        G_s_n[0] = G_s[0].replace("x", str(ub))
+        G_s_n[1] = G_s[1].replace("x", str(ub))
+
+        D_s_n[0] = D_s[0].replace("x", str(ub))
+        D_s_n[1] = D_s[1].replace("x", str(ub))
+
+        # redefining transfer
+        transfer = sym2transfer(G_s_n, D_s_n)
+
+        # find the max "radius", 1.3 times the maximum radius created by a zero or pole
+        max_r = 1.3 * max([max(abs(c.pole(transfer))), max(abs(c.zero(transfer)))])
+
+        return max_r
+
+
     # takes x as variable, x value passed by list comprehension
-    # pass max_y to set constant y limit
-    def plot_anim(G_s, D_s, x):
+    # pass lims, found with previous function
+    def plot_anim(G_s, D_s, x,x_lims,y_lims):
 
         # iterative plant and controller
         G_s_n = ["", ""]
@@ -916,8 +1033,8 @@ def rootlocus_anim(G_s, D_s, lb, ub, samples, nfps):
 
         #plotting transfer
         fig,ax = plt.subplots()
-        c.root_locus(transfer,grid=True,Plot=True,xlim=[-10,0],ylim=[-10,10])
-        plt.title("x = " + str(x))
+        c.root_locus(transfer,grid=True,Plot=True,xlim=x_lims,ylim=y_lims)
+        plt.title("x = " + str(round(x,3)))
         fig = plt.gcf()
 
         # maximize
@@ -937,9 +1054,15 @@ def rootlocus_anim(G_s, D_s, lb, ub, samples, nfps):
     if os.path.exists(ROOT_DIR + "\\gifs") == False:
         os.mkdir(ROOT_DIR + "\\gifs")
 
+    #getting lims
+    max_r = get_lims(G_s,D_s,ub)
+
+    x_lims = [-max_r,0]
+    y_lims = [-max_r,max_r]
+
     # big boi, getting a list of images using list comp
     imageio.mimsave((ROOT_DIR + '\\gifs\\animated_rootlocus.gif'),
-                    [plot_anim(G_s, D_s, x) for x in np.arange(lb, ub, ((ub - lb) / samples))], fps=nfps)
+                    [plot_anim(G_s, D_s,x,x_lims,y_lims) for x in np.arange(lb, ub, ((ub - lb) / samples))], fps=nfps)
 
     # closing all figures
     plt.close("all")

@@ -677,7 +677,12 @@ Root locus plotter... takes transfer function and uses controls library to plot
 
 
 def rootlocus_plotter(transfer):
-    c.root_locus(transfer, grid=True, PrintGain=True, Plot=True)
+
+    #find the max "radius", 1.3 times the maximum radius created by a zero or pole from origin
+    max_r = 1.3*max([max(abs(c.pole(transfer))),max(abs(c.zero(transfer)))])
+
+    #plot with lims
+    c.root_locus(transfer, grid=True, PrintGain=True, Plot=True,xlim=[-max_r,0],ylim=[-max_r,max_r])
     plt.show()
 
 
@@ -985,9 +990,32 @@ rootlocus animator
 def rootlocus_anim(G_s, D_s, lb, ub, samples, nfps):
     plt.ioff()
 
+    #getting lims, equal to twice the radius of the largest pole or zero from origin
+    #only need ub, the largest value ...
+    def get_lims(G_s,D_s,ub):
+        # iterative plant and controller
+        G_s_n = ["", ""]
+        D_s_n = ["", ""]
+
+        # simply replacing x with value, stored as strings.
+        G_s_n[0] = G_s[0].replace("x", str(ub))
+        G_s_n[1] = G_s[1].replace("x", str(ub))
+
+        D_s_n[0] = D_s[0].replace("x", str(ub))
+        D_s_n[1] = D_s[1].replace("x", str(ub))
+
+        # redefining transfer
+        transfer = sym2transfer(G_s_n, D_s_n)
+
+        # find the max "radius", 1.3 times the maximum radius created by a zero or pole
+        max_r = 1.3 * max([max(abs(c.pole(transfer))), max(abs(c.zero(transfer)))])
+
+        return max_r
+
+
     # takes x as variable, x value passed by list comprehension
-    # pass max_y to set constant y limit
-    def plot_anim(G_s, D_s, x):
+    # pass lims, found with previous function
+    def plot_anim(G_s, D_s, x,x_lims,y_lims):
 
         # iterative plant and controller
         G_s_n = ["", ""]
@@ -1005,8 +1033,8 @@ def rootlocus_anim(G_s, D_s, lb, ub, samples, nfps):
 
         #plotting transfer
         fig,ax = plt.subplots()
-        c.root_locus(transfer,grid=True,Plot=True,xlim=[-10,0],ylim=[-10,10])
-        plt.title("x = " + str(x))
+        c.root_locus(transfer,grid=True,Plot=True,xlim=x_lims,ylim=y_lims)
+        plt.title("x = " + str(round(x,3)))
         fig = plt.gcf()
 
         # maximize
@@ -1026,9 +1054,15 @@ def rootlocus_anim(G_s, D_s, lb, ub, samples, nfps):
     if os.path.exists(ROOT_DIR + "\\gifs") == False:
         os.mkdir(ROOT_DIR + "\\gifs")
 
+    #getting lims
+    max_r = get_lims(G_s,D_s,ub)
+
+    x_lims = [-max_r,0]
+    y_lims = [-max_r,max_r]
+
     # big boi, getting a list of images using list comp
     imageio.mimsave((ROOT_DIR + '\\gifs\\animated_rootlocus.gif'),
-                    [plot_anim(G_s, D_s, x) for x in np.arange(lb, ub, ((ub - lb) / samples))], fps=nfps)
+                    [plot_anim(G_s, D_s,x,x_lims,y_lims) for x in np.arange(lb, ub, ((ub - lb) / samples))], fps=nfps)
 
     # closing all figures
     plt.close("all")

@@ -234,7 +234,8 @@ class mygui(QDialog):
 
             """
             cleaning center
-
+            
+            " " ==  ""      (whitespace deletion)
             ^   ==  **
             )(  ==  )*(
             s(  ==  s*(
@@ -247,6 +248,7 @@ class mygui(QDialog):
             xs  ==  x*s
             n() ==  n*()
             ()n ==  ()*n
+            +s+ ==  +(1.001*s)+
             """
 
             # defaulting to 1 if no value, strings for sym2transfer to handle
@@ -260,7 +262,7 @@ class mygui(QDialog):
                 D_s[1] = "1"
 
             # defining syntaxers and replacements
-            syntaxers = {'^': '**', ')(': ')*(', 's(': 's*(', ')s': ')*s', 'sx': 's*x', 'xs': 'x*s'}
+            syntaxers = {" ":"",'^': '**', ')(': ')*(', 's(': 's*(', ')s': ')*s', 'sx': 's*x', 'xs': 'x*s'," ":"","+s+":"+(1.001*s)+"}
 
             # making replacements for known syntaxes
             for key in syntaxers:
@@ -306,6 +308,7 @@ class mygui(QDialog):
                 G_s[1] = G_s[1].replace(")" + str(n), ")*" + str(n))
                 D_s[0] = D_s[0].replace(")" + str(n), ")*" + str(n))
                 D_s[1] = D_s[1].replace(")" + str(n), ")*" + str(n))
+
 
             # check entry, used to check if x found somewhere
             check_entry = G_s[0] + G_s[1] + D_s[0] + D_s[1]
@@ -611,14 +614,18 @@ def step_plotter(G_s,D_s, max_t,cssv=-1):
     for n in range(998):
         ddy.append((dy[n + 1] - dy[n]) / time_step)
 
+    max_v = dy[np.argmax(np.abs(dy))]
+    max_a = ddy[np.argmax(np.abs(ddy))]
+
+
     # getting step info
     info = c.step_info(transfer)
     OS = round(info['Overshoot'], 3)
     Ts = round(info['SettlingTime'], 3)
     SSv = round(info['SteadyStateValue'], 3)
     peak = round(info['Peak'], 3)
-    max_v = round(max(dy), 4)
-    max_a = round(max(ddy), 4)
+    max_v = round(max_v, 4)
+    max_a = round(max_a, 4)
 
     # plotting displacement over time to step response
     plt.subplot(2, 1, 1)
@@ -641,7 +648,7 @@ def step_plotter(G_s,D_s, max_t,cssv=-1):
     plt.subplot(4, 1, 3)
     plt.plot(t[:999], dy, "y")
     # drawing max v line
-    plt.axhline(max(dy), linewidth=1, linestyle='--', color='g')
+    plt.axhline(max_v, linewidth=1, linestyle='--', color='g')
     plt.grid(True)
     plt.ylabel("Velocity")
     plt.xlim([0, max_t])
@@ -650,8 +657,8 @@ def step_plotter(G_s,D_s, max_t,cssv=-1):
     plt.subplot(4, 1, 4)
     plt.plot(t[:998], ddy, 'r')
     plt.ylabel("Acceleration")
-    # drawing max v line
-    plt.axhline(max(ddy), linewidth=1, linestyle='--', color='g')
+    # drawing max a line
+    plt.axhline(max_a, linewidth=1, linestyle='--', color='g')
     plt.grid(True)
     plt.xlim([0, max_t])
     plt.xlabel('Time')

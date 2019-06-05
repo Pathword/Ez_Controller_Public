@@ -154,10 +154,11 @@ class mygui(QDialog):
         # execute function
         step_anim(G_s, D_s, lb, ub, samples, max_t, fps,cssv)
 
-        # telling user gif location
+        #getting gif location
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         location = str((ROOT_DIR + "\\gifs\\animated.gif"))
 
+        # telling user gif location
         self.lineEdit_gifpath.setText(location)
 
         # encapsulation with double strings, os freaks out sometimes
@@ -728,11 +729,15 @@ saved to current directory and then gifs folder. (ROOT_DIR + \\gifs\\animated.gi
 def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps,cssv=-1):
     # takes x as variable, x value passed by list comprehension
     # pass max_y to set constant y limit
-    def plot_anim(G_s, D_s, x, max_y, max_t,cssv=-1):
+    def plot_anim(G_s, D_s, x, min_y,max_y, max_t,cssv=-1):
 
         # iterative plant and controller
         G_s_n = ["", ""]
         D_s_n = ["", ""]
+
+        #my poor poor algebraic expander... replace 1s. cant handle isolated s.
+        if x == 1:
+            x = 1.0001
 
         # simply replacing x with value, stored as strings.
         G_s_n[0] = G_s[0].replace("x", str(x))
@@ -780,7 +785,8 @@ def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps,cssv=-1):
         peak = round(peak, 4)
 
         fig, ax = plt.subplots()
-        ax.set_ylim(0, max_y)
+        ax.set_ylim(min_y, max_y)
+        ax.set_xlim(0,max_t)
         ax.plot(t, y)
         # drawing Ts line
         ax.axvline(info['SettlingTime'], linewidth=1, linestyle='--', color='b')
@@ -802,6 +808,7 @@ def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps,cssv=-1):
 
     # pre iterating, getting max val from a smaller sample set
     def get_ylim(G_s, D_s, lb, ub, samples,cssv=-1):
+        min_peaks = []
         max_peaks = []
 
         # getting smaller samples to save on rendering time
@@ -814,6 +821,10 @@ def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps,cssv=-1):
             # iterative plant and controller
             G_s_n = ["", ""]
             D_s_n = ["", ""]
+
+            # my poor poor algebraic expander... replace 1s. cant handle isolated s.
+            if x == 1:
+                x = 1.0001
 
             # simply replacing x with value, stored as strings.
             G_s_n[0] = G_s[0].replace("x", str(x))
@@ -840,21 +851,30 @@ def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps,cssv=-1):
                 transfer = sym2transfer(G_s_n, D_s_n)
 
 
-            # get step info of transfer
-            info = c.step_info(transfer)
-            # get peak value
-            peak = info['Peak']
-            # append peak value
-            max_peaks.append(peak)
+            # get step response of transfer
+            resp = c.step_response(transfer)[1]
+
+            # get min value
+            min_peak = min(resp)
+            # get max value
+            max_peak = max(resp)
+
+            # append peak values
+            min_peaks.append(min_peak)
+            max_peaks.append(max_peak)
+
 
         # y lim is the max of the maximum peaks returned,
+        min_y = min(min_peaks)
         max_y = max(max_peaks)
 
 
-        return max_y
+        return [min_y,max_y]
 
     # getting y lim
-    max_y = get_ylim(G_s, D_s, lb, ub, samples,cssv)
+    lims = get_ylim(G_s, D_s, lb, ub, samples,cssv)
+    min_y = lims[0]
+    max_y = lims[1]
 
     # getting root dir
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -865,7 +885,7 @@ def step_anim(G_s, D_s, lb, ub, samples, max_t, nfps,cssv=-1):
 
     # big boi, getting a list of images using list comp
     imageio.mimsave((ROOT_DIR + '\\gifs\\animated.gif'),
-                    [plot_anim(G_s, D_s, x, max_y, max_t,cssv) for x in np.arange(lb, ub, ((ub - lb) / samples))], fps=nfps)
+                    [plot_anim(G_s, D_s, x,min_y, max_y, max_t,cssv) for x in np.arange(lb, ub, ((ub - lb) / samples))], fps=nfps)
 
     # closing all figures
     plt.close("all")
@@ -886,6 +906,10 @@ def crit_delta(G_s, D_s, lb, ub, samples, max_t,cssv=-1):
         # iterative plant and controller
         G_s_n = ["", ""]
         D_s_n = ["", ""]
+
+        # my poor poor algebraic expander... replace 1s. cant handle isolated s.
+        if x == 1:
+            x = 1.0001
 
         # simply replacing x with value, stored as strings.
         G_s_n[0] = G_s[0].replace("x", str(x))
@@ -1014,6 +1038,10 @@ def rootlocus_anim(G_s, D_s, lb, ub, samples, nfps):
         # iterative plant and controller
         G_s_n = ["", ""]
         D_s_n = ["", ""]
+
+        # my poor poor algebraic expander... replace 1s. cant handle isolated s.
+        if x == 1:
+            x = 1.0001
 
         # simply replacing x with value, stored as strings.
         G_s_n[0] = G_s[0].replace("x", str(ub))

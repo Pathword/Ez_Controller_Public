@@ -1,13 +1,13 @@
 # Ez_Controller_Public
 Public Ez_Controller all in one version, up to date as of 5/22/2019 4pm 
 
+To use the .exe, ensure that the app_v#.##.ui file is in the samme directory (folder). 
+
 Fixed sympy/pyinstaller issue. Pyinstaller gave recursion error because of sympy's circular imports. Created a new algebraic expander using pymbolic and regex. 
 
 
 ---
 OPTIONAL:
-
-For .dll dist downloads for v1.11 and later, create a shortcut to .exe file for ease of use. Store dist. folder somewhere on machine. 
 
 Gif scrubber: download gif scrubber extension for chrome: https://chrome.google.com/webstore/detail/gif-scrubber/gbdacbnhlfdlllckelpdkgeklfjfgcmp?hl=en
 
@@ -21,9 +21,9 @@ Drag and drop the gif in a chrome browser, right click image and select gif scru
 Known Issues: 
 
 
--step responses that settle to 0 don't return proper settling times, makes sense because (Ts) band is derived from +-2% of steady state value. Could make it as a function of peak values, double check with Dr. A/L. Current workaround is editing timeresp.py in controls site-package. 
+-step responses that settle to 0 don't return proper settling times, makes sense because (Ts) band is derived from +-2% of steady state value. Defaults to max time defined. 
 
--GUI will not display fully on windows machines with scaling != 100%. Settings -> Dispay -> Scale and Layout -> Change the size of text, apps, and other items. 
+-GUI will not display fully on windows machines with scaling != 100%. Fix: Settings -> Dispay -> Scale and Layout -> Change the size of text, apps, and other items. 
 
 
 ---

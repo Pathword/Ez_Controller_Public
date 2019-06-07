@@ -175,6 +175,7 @@ class mygui(QDialog):
     #animated root locus
     def animated_root_locus(self,G_s,D_s,lb,ub,samples,fps):
         plt.close()
+
         rootlocus_anim(G_s,D_s,lb,ub,samples,fps)
 
         # telling user gif location
@@ -1040,8 +1041,8 @@ def rootlocus_anim(G_s, D_s, lb, ub, samples, nfps):
         D_s_n = ["", ""]
 
         # my poor poor algebraic expander... replace 1s. cant handle isolated s.
-        if x == 1:
-            x = 1.0001
+        if ub == 1:
+            ub = 1.0001
 
         # simply replacing x with value, stored as strings.
         G_s_n[0] = G_s[0].replace("x", str(ub))
@@ -1050,6 +1051,7 @@ def rootlocus_anim(G_s, D_s, lb, ub, samples, nfps):
         D_s_n[0] = D_s[0].replace("x", str(ub))
         D_s_n[1] = D_s[1].replace("x", str(ub))
 
+
         # redefining transfer
         transfer = sym2transfer(G_s_n, D_s_n)
 
@@ -1057,9 +1059,11 @@ def rootlocus_anim(G_s, D_s, lb, ub, samples, nfps):
         max_zero = 0
         max_pole = 0
 
+
         #if any, returns bool for content
         if c.zero(transfer).any():
             max_zero = max(abs(c.zero(transfer)))
+
 
         if c.pole(transfer).any():
             max_pole = max(abs(c.pole(transfer)))
@@ -1077,6 +1081,10 @@ def rootlocus_anim(G_s, D_s, lb, ub, samples, nfps):
         # iterative plant and controller
         G_s_n = ["", ""]
         D_s_n = ["", ""]
+
+        # my poor poor algebraic expander... replace 1s. cant handle isolated s.
+        if x == 1:
+            x = 1.0001
 
         # simply replacing x with value, stored as strings.
         G_s_n[0] = G_s[0].replace("x", str(x))
@@ -1111,12 +1119,14 @@ def rootlocus_anim(G_s, D_s, lb, ub, samples, nfps):
     if os.path.exists(ROOT_DIR + "\\gifs") == False:
         os.mkdir(ROOT_DIR + "\\gifs")
 
+    print("getting lims")
     #getting lims
     max_r = get_lims(G_s,D_s,ub)
 
     x_lims = [-max_r,0]
     y_lims = [-max_r,max_r]
 
+    print("running big boi")
     # big boi, getting a list of images using list comp
     imageio.mimsave((ROOT_DIR + '\\gifs\\animated_rootlocus.gif'),
                     [plot_anim(G_s, D_s,x,x_lims,y_lims) for x in np.arange(lb, ub, ((ub - lb) / samples))], fps=nfps)

@@ -1040,8 +1040,8 @@ def rootlocus_anim(G_s, D_s, lb, ub, samples, nfps):
         D_s_n = ["", ""]
 
         # my poor poor algebraic expander... replace 1s. cant handle isolated s.
-        if x == 1:
-            x = 1.0001
+        if ub == 1:
+            ub = 1.0001
 
         # simply replacing x with value, stored as strings.
         G_s_n[0] = G_s[0].replace("x", str(ub))
